@@ -1,6 +1,6 @@
 from fastapi import FastAPI, HTTPException, Query
 from fastapi.middleware.cors import CORSMiddleware
-from server.scraper import scraper
+from scaper import scraper
 import time
 import asyncio
 
