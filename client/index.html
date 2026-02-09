@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Andar Smart Tag Scanner</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src='https://unpkg.com/tesseract.js@v5.0.0/dist/tesseract.min.js'></script>
+    <link href="style.css" rel="stylesheet">
+    <script src='https://unpkg.com/tesseract.js@v4.1.1/dist/tesseract.min.js'></script>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        /* Custom utilities needed for PWA feel */
+        body {
+            overscroll-behavior-y: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+    </style>
+    <title>Andar Smart Scanner</title>
+</head>
+
+<body class="bg-gray-900 text-white h-screen flex flex-col overflow-hidden">
+
+    <!-- Main Content -->
+    <main class="flex-1 flex flex-col pt-16 relative">
+
+        <!-- Camera View -->
+        <div id="camera-container"
+            class="relative w-full flex-1 bg-black flex items-center justify-center overflow-hidden">
+            <video id="camera-feed" autoplay playsinline muted
+                class="absolute min-w-full min-h-full object-cover"></video>
+
+            <!-- ROI Overlay -->
+            <div
+                class="absolute inset-0 border-[40px] border-black/50 z-10 pointer-events-none flex flex-col items-center justify-center">
+                <div
+                    class="relative w-64 h-24 border-2 border-white/80 rounded-lg shadow-[0_0_20px_rgba(255,255,255,0.3)]">
+                    <!-- Corner markers -->
+                    <div class="absolute -top-1 -left-1 w-4 h-4 border-t-4 border-l-4 border-red-500"></div>
+                    <div class="absolute -top-1 -right-1 w-4 h-4 border-t-4 border-r-4 border-red-500"></div>
+                    <div class="absolute -bottom-1 -left-1 w-4 h-4 border-b-4 border-l-4 border-red-500"></div>
+                    <div class="absolute -bottom-1 -right-1 w-4 h-4 border-b-4 border-r-4 border-red-500"></div>
+
+                    <!-- Scanning line animation -->
+                    <div class="scan-line absolute w-full h-1 bg-red-500/50 blur-sm top-0"></div>
+                </div>
+                <p class="text-white/70 text-sm mt-4 font-mono">Place Model No. Here</p>
+                <p class="text-xs text-gray-400 mt-1">e.g., MOFLS-18</p>
+            </div>
+
+            <!-- Hidden Canvas for OCR processing -->
+            <canvas id="ocr-canvas" class="hidden"></canvas>
+        </div>
+
+        <!-- Manual Input & Results Panel -->
+        <div class="bg-gray-900 p-6 rounded-t-3xl shadow-2xl z-20 -mt-6 border-t border-gray-800">
+            <!-- Manual Input -->
+            <div class="relative mb-6">
+                <input type="text" id="manual-input"
+                    class="w-full bg-gray-800 border border-gray-700 rounded-xl px-4 py-4 text-xl font-mono text-center tracking-widest placeholder-gray-600 focus:outline-none focus:border-red-500 focus:ring-1 focus:ring-red-500 transition-all uppercase"
+                    placeholder="MOFLS-18">
+                <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                    <svg class="w-6 h-6 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                    </svg>
+                </div>
+            </div>
+
+            <!-- Result Card -->
+            <div id="result-card" class="bg-gray-800 rounded-xl p-4 hidden border border-gray-700">
+                <div class="flex justify-between items-start mb-2">
+                    <h3 id="product-name" class="text-sm text-gray-300 font-medium leading-tight line-clamp-2">
+                        Loading...</h3>
+                    <span id="scan-latency"
+                        class="text-[10px] text-gray-500 font-mono ml-2 whitespace-nowrap">0.00s</span>
+                </div>
+                <div class="flex items-baseline gap-3 mt-1">
+                    <span id="sale-price" class="text-2xl font-bold text-white">---</span>
+                    <span id="original-price" class="text-sm text-gray-500 line-through">---</span>
+                </div>
+            </div>
+
+            <!-- Status/Log Message -->
+            <p id="status-message" class="text-xs text-center text-gray-500 mt-4 h-4 truncate">Ready to scan</p>
+        </div>
+    </main>
+
+    <script src="app.js"></script>
+</body>
+
+</html>
